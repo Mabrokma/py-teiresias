@@ -24,6 +24,9 @@ class Offset_list(object):
 	def append(self, ij):
 		self.ijs.append(ij)
 
+	def cover_strings(self):
+		return set([ij.i for ij in self.ijs])
+
 	def __len__(self):
 		return len(self.ijs)
 
@@ -58,7 +61,7 @@ class Elementary_patterns(object):
 	def insert(self, pattern):
 		if self.elementary_list:
 			for index, elementary_pattern in enumerate(self.elementary_list):
-				if compare(elementary_pattern.motif, pattern.motif) > 0:
+				if alphabetical(elementary_pattern.motif, pattern.motif) > 0:
 					self.elementary_list.insert(index, pattern)
 					break
 			else:
@@ -77,6 +80,32 @@ class Elementary_patterns(object):
 
 	def supported(self, config):
 		self.elementary_list = [x for x in self.elementary_list if len(x.Ls.ijs) >= config.k]
+
+# @debug.print_in_out
+def alphabetical(motif1, motif2):
+	# print motif1, "vs", motif2
+	length = len(motif2) if len(motif1) > len(motif2) else len(motif1)
+	for i in range(length):
+		if motif1[i] == WILDCARD and motif2[i] == LEFTKAKKO:
+			return 1
+		elif motif1[i] == LEFTKAKKO and motif2[i] == WILDCARD:
+			return -1
+		elif motif1[i] != WILDCARD and motif2[i] == WILDCARD:
+			return -1
+		elif motif1[i] == WILDCARD and motif2[i] != WILDCARD:
+			return 1
+		elif motif1[i] != LEFTKAKKO and motif2[i] == LEFTKAKKO:
+			return -1
+		elif motif1[i] == LEFTKAKKO and motif2[i] != LEFTKAKKO:
+			return 1
+	if len(motif1) > length:
+		return -1
+	elif len(motif1) < length:
+		return 1
+	elif (motif1 < motif2):
+		return -1
+	else:
+		return 1
 
 def is_same_list(list1, list2):
 	if len(list1) == len(list2):
@@ -135,32 +164,6 @@ def make_and_insert(substs, eps, current_bit_mask, seqs, i, j):
 			# print "inserted"
 	# print "================================="
 	return eps
-
-# @debug.print_in_out
-def compare(motif1, motif2):
-	# print motif1, "vs", motif2
-	length = len(motif2) if len(motif1) > len(motif2) else len(motif1)
-	for i in range(length):
-		if motif1[i] == WILDCARD and motif2[i] == LEFTKAKKO:
-			return 1
-		elif motif1[i] == LEFTKAKKO and motif2[i] == WILDCARD:
-			return -1
-		elif motif1[i] != WILDCARD and motif2[i] == WILDCARD:
-			return -1
-		elif motif1[i] == WILDCARD and motif2[i] != WILDCARD:
-			return 1
-		elif motif1[i] != LEFTKAKKO and motif2[i] == LEFTKAKKO:
-			return -1
-		elif motif1[i] == LEFTKAKKO and motif2[i] != LEFTKAKKO:
-			return 1
-	if len(motif1) > length:
-		return -1
-	elif len(motif1) < length:
-		return 1
-	elif (motif1 < motif2):
-		return -1
-	else:
-		return 1
 
 # def initialize_bit_mask(w, l):
 # 	j = w - l

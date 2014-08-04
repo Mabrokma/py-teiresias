@@ -26,7 +26,8 @@ def initialize_cmdline(command_line):
 	parser.add_option("-l", dest="l", default=1)
 	parser.add_option("-w", dest="w", default=1)
 	parser.add_option("-k", dest="k", default=1)
-	command_line = command_line.split()
+	if type(command_line) is not list:
+		command_line = command_line.split()
 	(options, command_line) = parser.parse_args(command_line)
 	print options
 	return Config(options)

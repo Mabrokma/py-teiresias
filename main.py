@@ -6,21 +6,28 @@ from seqs import *
 from pattern import *
 from convolution import *
 
+import sys
+
 LITERAL = 1
 
 def main():
-	command_line = "-itest.txt -oresult.txt -l3 -w8 -k3"
+	command_line = sys.argv[1:]
 	config = initialize_cmdline(command_line)
 	seqs = parse_seqs(config.input_file)
+	results = teiresias(config, seqs)
+	for result in results:
+		print result[0], result[1], result[2]
 
+def teiresias(config, seqs):
 	print config.l, config.w, config.k
 	if config.l <= config.w and config.w <= smallest_seq(seqs) and config.l >= 2:
 		eps = scan(seqs, config)
 		print "--------------"
 		for ep in eps:
 			print ep
-		convolute(eps, config, seqs)
+		results = convolute(eps, config, seqs)
 		print "--------------"
+		return results
 	else:
 		print "error occured. check parameters."
 
@@ -85,7 +92,7 @@ def convolute(eps, config, seqs):
 			while flag:
 				flag = False
 				try:
-					print "============ try ==========="
+					# print "============ try ==========="
 					if not pattern_stack:
 						remove_entries(p, dir_p, dir_s, OVERLAP_LEN, WILDCARD)
 						# break
@@ -121,7 +128,7 @@ def convolute(eps, config, seqs):
 
 					w = suffix(t.motif, OVERLAP_LEN, WILDCARD)
 					index, u_pepvec = dir_p.search(w)
-					print w, u_pepvec
+					# print w, u_pepvec
 					for itU in u_pepvec.pattern_pairs:
 						pQ = itU
 						r = right_convolute(t, pQ, w)
@@ -161,9 +168,13 @@ def convolute(eps, config, seqs):
 	# ここらへんにちょっとbracksの処理あり
 	print "-----------------------"
 	soln_vec = clean_up_soln(maximal, seqs)
-	for p in soln_vec:
-		print p
-		print p.Ls
+	results = []
+	for sol in soln_vec:
+		len_of_offset = len(sol.Ls)
+		len_of_cover = len(sol.Ls.cover_strings())
+		motif = str(sol)
+		results.append((len_of_offset, len_of_cover, motif))
+	return results
 
 if __name__ == "__main__":
 	main()
