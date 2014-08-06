@@ -6,6 +6,8 @@ from seqs import *
 from pattern import *
 from convolution import *
 
+import copy
+
 import sys
 
 LITERAL = 1
@@ -94,17 +96,17 @@ def convolute(eps, config, seqs):
 	count = 0
 	for eps in dynamic_eps2:
 		for ep in sorted(eps, cmp = lambda x, y:alphabetical(y.motif, x.motif)):
-			p = ep
-			print "----------------"
-			print "push1 %s" % p
+			p = copy.deepcopy(ep)
+			print "--------------"
+			print "Push1 %s" % p
 			pattern_stack.append(p)
 			flag = True
 			# label start
 			while flag:
-				flag = False
 				try:
 					# print "============ try ==========="
-					if not pattern_stack:
+					if len(pattern_stack) == 0:
+						print "remove1", p
 						remove_entries(p, dir_p, dir_s, OVERLAP_LEN, WILDCARD)
 						# break
 						flag = False
@@ -113,6 +115,7 @@ def convolute(eps, config, seqs):
 
 					w = prefix(t.motif, OVERLAP_LEN, WILDCARD)
 					index, u_pepvec = dir_s.search(w)
+					# print u_pepvec
 					for itU in u_pepvec.pattern_pairs:
 						pQ = itU
 						r = left_convolute(pQ, t, w)
@@ -157,6 +160,7 @@ def convolute(eps, config, seqs):
 							# print "True"
 							print "Push3 %s" % r
 							pattern_stack.append(r)
+							# goto start
 							flag = True
 							raise LoopException
 						else:
@@ -164,16 +168,16 @@ def convolute(eps, config, seqs):
 							# print "False"
 
 					if not pattern_stack:
+						print "remove2", t
 						remove_entries(t, dir_p, dir_s, OVERLAP_LEN, WILDCARD)
 						print "touru"
+						# break
 						flag = False
 						raise LoopException
 					add_pattern(maximal, t, seqs)
 					poped = pattern_stack[-1]
 					pattern_stack.pop()
 					print "Pop3 %s" % poped
-
-					flag = True
 				except LoopException:
 					pass
 	# ここらへんにちょっとbracksの処理あり

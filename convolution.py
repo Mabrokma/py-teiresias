@@ -268,7 +268,11 @@ class Dir_s_item(object):
 		self.pattern_pairs = pattern_pairs
 
 	def __str__(self):
-		return "".join(self.string)
+		string = "dict: "
+		string += "".join(self.string) + "\n"
+		for pair in self.pattern_pairs:
+			string += "\t" + str(pair) + "\n"
+		return string
 
 	def delete(self, pattern):
 		index, p = self.search(pattern)
@@ -310,7 +314,7 @@ class Dir_s(object):
 		dir_index, dir_s_item = self.search(s)
 		if dir_s_item and dir_index:
 			dir_s_item.delete(pattern)
-			if dir_s_item.is_empty:
+			if dir_s_item.is_empty():
 				del self.items[dir_index]
 		else:
 			return None
@@ -379,7 +383,7 @@ def extract_s(eps, overlap_len, dir_s):
 		if i_itDirS != len(dir_s):
 			flag = False
 			for i, itVector in enumerate(dir_s[i_itDirS].pattern_pairs):
-				if dir_s_comp(ep.motif, itVector.motif) < 0:
+				if dir_s_comp(ep.motif, itVector.motif) >= 0:
 					dir_s[i_itDirS].pattern_pairs.append(ep)
 					flag = True
 					break
@@ -398,26 +402,25 @@ def dir_s_comp(motif1, motif2):
 	length = len(motif2) if len(motif1) > len(motif2) else len(motif1)
 	for i in range(length):
 		if motif1[len1 -i] == WILDCARD and motif2[len2 -i] == LEFTKAKKO:
-			return 1
+			return False
 		elif motif1[len1 -i] == LEFTKAKKO and motif2[len2 -i] == WILDCARD:
-			return -1
+			return True
 		elif motif1[len1 -i] != WILDCARD and motif2[len2 -i] == WILDCARD:
-			return -1
+			return True
 		elif motif1[len1 -i] == WILDCARD and motif2[len2 -i] != WILDCARD:
-			return 1
+			return False
 		elif motif1[len1 -i] != LEFTKAKKO and motif2[len2 -i] == LEFTKAKKO:
-			return -1
+			return False
 		elif motif1[len1 -i] == LEFTKAKKO and motif2[len2 -i] != LEFTKAKKO:
-			return 1
-	flag = bracket_length_comp2(motif1, motif2)
-	if flag == 1:
-		return -1
-	elif flag == 2:
-		return 1
-	elif (motif1 > motif2):
-		return -1
+			return True
+	if length < len(motif1):
+		return True
+	elif len(motif1) < length:
+		return False
+	elif motif1 < motif2:
+		return True
 	else:
-		return 1
+		return False
 
 def make_dir_s(dynamic_eps, overlap_len):
 	dir_s = Dir_s()
@@ -477,7 +480,7 @@ class Dir_p(object):
 		dir_index, dir_s_item = self.search(s)
 		if dir_s_item and dir_index:
 			dir_s_item.delete(pattern)
-			if dir_s_item.is_empty:
+			if dir_s_item.is_empty():
 				del self.items[dir_index]
 		else:
 			return None
@@ -557,26 +560,26 @@ def dir_p_comp(motif1, motif2):
 	length = len(motif2) if len(motif1) > len(motif2) else len(motif1)
 	for i in range(length):
 		if motif1[i] == WILDCARD and motif2[i] == LEFTKAKKO:
-			return -1
+			return False
 		elif motif1[i] == LEFTKAKKO and motif2[i] == WILDCARD:
-			return 1
+			return True
 		elif motif1[i] != WILDCARD and motif2[i] == WILDCARD:
-			return 1
+			return True
 		elif motif1[i] == WILDCARD and motif2[i] != WILDCARD:
-			return -1
+			return False
 		elif motif1[i] != LEFTKAKKO and motif2[i] == LEFTKAKKO:
-			return 1
+			return True
 		elif motif1[i] == LEFTKAKKO and motif2[i] != LEFTKAKKO:
-			return -1
+			return False
 	flag = bracket_length_comp2(motif1, motif2)
 	if flag == 1:
-		return 1
+		return True
 	elif flag == 2:
-		return -1
-	elif (motif1 > motif2):
-		return 1
+		return False
+	elif (motif1 < motif2):
+		return True
 	else:
-		return -1
+		return False
 
 def make_dir_p(dynamic_eps, overlap_len):
 	dir_p = Dir_p()
