@@ -59,15 +59,16 @@ class Elementary_patterns(object):
 		self.elementary_list = elementary_list
 
 	def insert(self, pattern):
-		if self.elementary_list:
-			for index, elementary_pattern in enumerate(self.elementary_list):
-				if alphabetical(elementary_pattern.motif, pattern.motif) > 0:
-					self.elementary_list.insert(index, pattern)
-					break
-			else:
-				self.elementary_list.append(pattern)
-		else:
-			self.elementary_list.append(pattern)
+		self.elementary_list.append(pattern)
+		# if self.elementary_list:
+		# 	for index, elementary_pattern in enumerate(self.elementary_list):
+		# 		if not alphabetical(elementary_pattern.motif, pattern.motif):
+		# 			self.elementary_list.insert(index, pattern)
+		# 			break
+		# 	else:
+		# 		self.elementary_list.append(pattern)
+		# else:
+		# 	self.elementary_list.append(pattern)
 
 	def __iter__(self):
 		return iter(self.elementary_list)
@@ -85,26 +86,43 @@ class Elementary_patterns(object):
 def alphabetical(motif1, motif2):
 	# print motif1, "vs", motif2
 	length = len(motif2) if len(motif1) > len(motif2) else len(motif1)
+	# print length
 	for i in range(length):
 		if motif1[i] == WILDCARD and motif2[i] == LEFTKAKKO:
+			# print "---1"
+			# return -1
 			return 1
 		elif motif1[i] == LEFTKAKKO and motif2[i] == WILDCARD:
+			# print "----2"
+			# return 1
 			return -1
 		elif motif1[i] != WILDCARD and motif2[i] == WILDCARD:
-			return -1
+			# print "---3"
+			# return -1
+			return 1
 		elif motif1[i] == WILDCARD and motif2[i] != WILDCARD:
+			# print "---4"
+			# return -1
 			return 1
 		elif motif1[i] != LEFTKAKKO and motif2[i] == LEFTKAKKO:
+			# print "---5"
+			# return 1
 			return -1
 		elif motif1[i] == LEFTKAKKO and motif2[i] != LEFTKAKKO:
+			# print "---6"
+			# return -1
 			return 1
-	if len(motif1) > length:
+	if len(motif1) >= length:
+		# return 1
 		return -1
 	elif len(motif1) < length:
+		# return -1
 		return 1
 	elif (motif1 < motif2):
+		# return 1
 		return -1
 	else:
+		# return -1
 		return 1
 
 def is_same_list(list1, list2):
@@ -194,9 +212,7 @@ def trim0s(bit_mask):
 	return bit_mask[:search_end_1(bit_mask)]
 
 def main():
-	a = Pattern(["a", "b", "c"])
-	b = Pattern(["a", "b"])
-	print a == b
+	print alphabetical("W.KK", "M.NA")
 
 if __name__ == "__main__":
 	main()

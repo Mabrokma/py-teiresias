@@ -16,7 +16,7 @@ def main():
 	seqs = parse_seqs(config.input_file)
 	results = teiresias(config, seqs)
 	for result in results:
-		print result[0], result[1], result[2]
+		print "%s\t%s\t%s" % (result[0], result[1], result[2])
 
 def teiresias(config, seqs):
 	print config.l, config.w, config.k
@@ -27,6 +27,17 @@ def teiresias(config, seqs):
 			print ep
 		results = convolute(eps, config, seqs)
 		print "--------------"
+		title = """##########################################################
+#                                                        #
+#                       FINAL RESULTS                    #
+#                                                        #
+##########################################################
+"""
+		f = open(config.output_file, "w")
+		f.write(title)
+		for result in results:
+			f.write("%s\t%s\t%s\n" % (result[0], result[1], result[2]))
+		f.close()
 		return results
 	else:
 		print "error occured. check parameters."
@@ -82,7 +93,7 @@ def convolute(eps, config, seqs):
 	u_pepvec = []
 	count = 0
 	for eps in dynamic_eps2:
-		for ep in eps:
+		for ep in sorted(eps, cmp = lambda x, y:alphabetical(y.motif, x.motif)):
 			p = ep
 			print "----------------"
 			print "push1 %s" % p

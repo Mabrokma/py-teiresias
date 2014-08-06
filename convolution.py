@@ -77,31 +77,44 @@ def non_bracket_diff_length(first, second):
 # rhs: Macimal_key object
 def Max_ltOp(lhs, rhs):
 	if (lhs.offset_list_size < rhs.offset_list_size):
-		return True
+		# return True
+		return 1
 	elif (lhs.offset_list_size > rhs.offset_list_size):
-		return False
+		# return Fals
+		return -1
 	elif (lhs.diff_sum < rhs.diff_sum):
-		return True
+		# return True
+		return 1
 	elif (lhs.diff_sum > rhs.diff_sum):
-		return False
+		# return Fals
+		return -1
 	elif (lhs.first_sequence < rhs.first_sequence):
-		return True
+		# return True
+		return 1
 	elif (lhs.first_sequence > rhs.first_sequence):
-		return False
+		# return Fals
+		return -1
 	elif (lhs.last_sequence < rhs.last_sequence):
-		return True
+		# return True
+		return 1
 	elif (lhs.last_sequence > rhs.last_sequence):
-		return False
+		# return Fals
+		return -1
 	elif (lhs.first_diff_sum_sum < rhs.first_diff_sum_sum):
-		return True
+		# return True
+		return 1
 	elif (lhs.first_diff_sum_sum > rhs.first_diff_sum_sum):
-		return False
+		# return Fals
+		return -1
 	elif (lhs.last_diff_sum_sum < rhs.last_diff_sum_sum):
-		return True
+		# return True
+		return 1
 	elif (lhs.last_diff_sum_sum > rhs.last_diff_sum_sum):
-		return False
+		# return Fals
+		return -1
 	else:
-		return False
+		# return Fals
+		return -1
 
 class Maximal_key(object):
 	def __init__(self):
@@ -140,7 +153,7 @@ class Maximal_map(object):
 	def insert(self, item):
 		if self.items:
 			for index, elementary_pattern in enumerate(self.items):
-				if Max_ltOp(elementary_pattern.Maximal_key, item.Maximal_key):
+				if Max_ltOp(elementary_pattern.Maximal_key, item.Maximal_key) > 0:
 					self.items.insert(index, item)
 					break
 			else:
